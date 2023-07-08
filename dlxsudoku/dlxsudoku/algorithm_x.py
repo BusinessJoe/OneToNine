@@ -68,8 +68,9 @@ class Matrix:
             display_list.append(" ".join(display_row))
         return "\n".join(display_list)
 
+Solution = list[int]
 
-def algorithm_x(matrix: Matrix, partial_solution = None, level: int = 0):
+def algorithm_x(matrix: Matrix, partial_solution: Solution | None = None, level: int = 0) -> list[Solution]:
     if partial_solution is None:
         partial_solution = []
 
