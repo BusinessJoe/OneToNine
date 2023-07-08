@@ -1,7 +1,5 @@
 # One To Nine
 
----
-
 ## Development
 
 Frontend code is in the `frontend/one-to-nine` directory.
