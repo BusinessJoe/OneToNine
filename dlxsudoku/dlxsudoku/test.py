@@ -21,6 +21,6 @@ if __name__ == "__main__":
     solutions = algorithm_x(matrix)
 
     for solution in solutions:
-        solved_sudoku = Sudoku6x6.from_algorithm_x_solution(solutions[0])
+        solved_sudoku = Sudoku6x6.from_algorithm_x_solution(solution)
         print(solved_sudoku)
         print()
