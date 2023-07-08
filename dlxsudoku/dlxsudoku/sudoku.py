@@ -29,7 +29,6 @@ class Sudoku:
 
         for r in self.rules:
             constraints = r.dlx_constraints(self)
-            print(f"constraint dimensions: {len(constraints)} by {len(constraints[0])}")
             matrix.extend(constraints)
 
         matrix_transpose = [list(i) for i in zip(*matrix)]
