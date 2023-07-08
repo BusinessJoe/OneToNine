@@ -1,5 +1,3 @@
-import copy
-
 class Matrix:
     rows: list[bool]
     columns: list[bool]
@@ -52,7 +50,7 @@ class Matrix:
         self.rows[row_idx] = False
 
     def copy(self):
-        return Matrix(copy.deepcopy(self.A), self.rows.copy(), self.columns.copy())
+        return Matrix(self.A, self.rows.copy(), self.columns.copy())
 
     def __str__(self) -> str:
         display_list = []
