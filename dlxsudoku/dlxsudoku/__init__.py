@@ -78,7 +78,9 @@ def algorithm_x(matrix: Matrix, partial_solution = None, level: int = 0):
 
     if matrix.is_empty():
         print("solved", partial_solution)
-        return
+        return [partial_solution]
+
+    solutions = []
 
     col_choice = matrix.choose_column()
     #print(f"row options for col {col_choice}: {matrix.list_rows(col_choice)}")
@@ -104,11 +106,12 @@ def algorithm_x(matrix: Matrix, partial_solution = None, level: int = 0):
             #print(f"removing column {j}")
             matrix.del_col(j)
 
-        algorithm_x(matrix, partial_solution + [row_choice], level + 1)
+        solutions.extend(algorithm_x(matrix, partial_solution + [row_choice], level + 1))
 
         matrix.columns = old_columns
         matrix.rows = old_rows
 
+    return solutions
 
 A = [
     [1, 0, 0, 1, 0, 0, 1],
@@ -121,4 +124,5 @@ A = [
 
 matrix = Matrix(A)
 
-algorithm_x(matrix)
+for solution in algorithm_x(matrix):
+    print(solution)
