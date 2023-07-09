@@ -1,110 +1,202 @@
+from __future__ import annotations
+
+class Node:
+    left: Node
+    right: Node
+    up: Node
+    down: Node
+    header: ColumnHeaderNode
+
+    def __init__(self, header: ColumnHeaderNode) -> None:
+        self.left = self
+        self.right = self
+        self.up = self
+        self.down = self
+        self.header = header
+
+    def hook_right(self, node: Node):
+        self.right = node
+        node.left = self
+
+    def hook_down(self, node: Node):
+        self.down = node
+        node.up = self
+
+class ColumnHeaderNode(Node):
+    left: ColumnHeaderNode
+    right: ColumnHeaderNode
+    size: int
+    label: str
+
+    def __init__(self, label: str) -> None:
+        super().__init__(self)
+        self.size = 0
+        self.label = label
+
+    def cover(self):
+        self.right.left = self.left
+        self.left.right = self.right
+
+        i = self.down
+        while i is not self:
+            j = i.right
+            while j is not i:
+                j.down.up = j.up
+                j.up.down = j.down
+                j.header.size -= 1
+
+                j = j.right   
+
+            i = i.down
+
+    def uncover(self):
+        i = self.up
+        while i is not self:
+            j = i.left
+            while j is not i:
+                j.header.size += 1
+                j.down.up = j
+                j.up.down = j
+
+                j = j.left
+
+            i = i.up
+
+        self.right.left = self
+        self.left.right = self
+
+
 class Matrix:
-    rows: list[bool]
-    columns: list[bool]
-    A: list[list[bool]]
+    root: ColumnHeaderNode
+    row_mapping: dict[tuple[int], int]
 
-    def __init__(self, A: list[list[bool]], rows = None, columns = None) -> None:
-        self.rows = [True] * len(A) if rows is None else rows
-        self.columns = [True] * len(A[0]) if columns is None else columns
-        self.A = A
+    def __init__(self, grid: list[list[bool]]) -> None:
+        self.root = self._make_graph(grid)
+        self.row_map = self._make_row_mapping(grid)
 
-    def is_empty(self) -> bool:
-        if not any(self.columns):
-            return True
-        return False
-    
-    def choose_column(self) -> int:
-        # Raises ValueError if no columns exist
-        least_trues = None
-        for idx, val in enumerate(self.columns):
-            if not val:
-                continue
-        
-            if least_trues is None:
-                least_trues = (idx, self._count_true(idx))
-            elif self._count_true(idx) < least_trues[1]:
-                least_trues = (idx, self._count_true(idx))
+    @staticmethod
+    def _make_graph(grid: list[list[bool]]) -> ColumnHeaderNode:
+        root = ColumnHeaderNode("root")
 
-        if least_trues is not None:
-            return least_trues[0]
-        
-        raise ValueError("no columns found")
-    
-    
-    def _count_true(self, col_idx):
-        row_idxs = [idx for idx, val in enumerate(self.rows) if val]
-        count = 0
-        for row in row_idxs:
-            if self.A[row][col_idx]:
-                count += 1
-        return count
-    
-    def list_rows(self, col_idx) -> list[int]:
-        indices = [idx for idx, val in enumerate(self.rows) if val and self.A[idx][col_idx]]
-        return indices
-    
-    def del_col(self, col_idx):
-        self.columns[col_idx] = False
+        column_headers: list[ColumnHeaderNode] = []
 
-    def del_row(self, row_idx):
-        self.rows[row_idx] = False
+        num_cols = len(grid[0])
+        for i in range(num_cols):
+            column_header = ColumnHeaderNode(label=str(i))
+            root.left.hook_right(column_header)
+            column_header.hook_right(root)
+            column_headers.append(column_header)
+            
 
-    def copy(self):
-        return Matrix(self.A, self.rows.copy(), self.columns.copy())
+        for row in grid:
+            leftmost_node = None
 
-    def __str__(self) -> str:
-        display_list = []
-
-        for row_idx, row in enumerate(self.A):
-            if not self.rows[row_idx]:
-                continue
-
-            display_row = []
             for col_idx, val in enumerate(row):
-                if not self.columns[col_idx]:
+                if not val:
                     continue
 
-                display_row.append("1" if self.A[row_idx][col_idx] else "0")
-            display_list.append(" ".join(display_row))
-        return "\n".join(display_list)
+                col_head = column_headers[col_idx]
 
-Solution = list[int]
+                node = Node(col_head)
 
-def algorithm_x(matrix: Matrix, partial_solution: Solution | None = None, level: int = 0) -> list[Solution]:
-    if partial_solution is None:
-        partial_solution = []
+                # link vertically
+                col_head.up.hook_down(node)
+                node.hook_down(col_head)
+                col_head.size += 1
 
-    if matrix.is_empty():
-        return [partial_solution]
+                # link horizontally
+                if leftmost_node is None:
+                    leftmost_node = node
+                else:
+                    leftmost_node.left.hook_right(node)
+                    node.hook_right(leftmost_node)
 
-    solutions = []
+        return root
+    
+    @staticmethod
+    def _make_row_mapping(grid: list[list[bool]]) -> dict[tuple[int], int]:
+        row_map = dict()
 
-    col_choice = matrix.choose_column()
-    for row_choice in matrix.list_rows(col_choice):
-        partial_solution = partial_solution.copy()
+        for row_idx, row in enumerate(grid):
+            key = tuple(i for i, val in enumerate(row) if val)
+            row_map[key] = row_idx
 
-        old_columns = matrix.columns.copy()
-        old_rows = matrix.rows.copy()
+        return row_map
 
-        for j in range(len(matrix.columns)):
-            if not matrix.columns[j] or not matrix.A[row_choice][j]:
-                continue
+    def search(self, solution = None):
+        # Handle mutable default arguments
+        if solution is None:
+            solution = []
 
-            for i in range(len(matrix.rows)):
-                if not matrix.rows[i] or not matrix.A[i][j]:
-                    continue
+        # Algorithm start
+        if self.root.right is self.root:
+            yield self.print_solution(solution)
+            return
+        
+        c = self.choose_column()
+        c.cover()
 
+        r = c.down
+        while r is not c:
+            solution.append(r)
+            j = r.right
+            while j is not r:
+                j.header.cover()
+                
+                j = j.right
             
-                matrix.del_row(i)
-            
-            matrix.del_col(j)
+            yield from self.search(solution)
+            solution.pop()
 
-        solutions.extend(algorithm_x(matrix, partial_solution + [row_choice], level + 1))
+            j = r.left
+            while j is not r:
+                j.header.uncover()
 
-        matrix.columns = old_columns
-        matrix.rows = old_rows
+                j = j.left
 
-    return solutions
+            r = r.down
+
+        c.uncover()
+
+
+    def choose_column(self) -> ColumnHeaderNode:
+        min_column = self.root.right
+        column = min_column.right
+        while column is not self.root:
+            if column.size < min_column.size:
+                min_column = column
+            column = column.right
+
+        # TODO: choose column with smallest size
+        return min_column
+    
+    def print_solution(self, data_objects: list[Node]) -> list[int]:
+        rows = []
+        for o in data_objects:
+            solution = [int(o.header.label)]
+            node = o.right
+            while node is not o:
+                solution.append(int(node.header.label))
+                node = node.right
+            key = tuple(sorted(solution))
+            rows.append(self.row_map[key])
+        return rows
+    # def __str__(self) -> str:
+    #     display_list = []
+
+    #     for row_idx, row in enumerate(self.A):
+    #         if not self.rows[row_idx]:
+    #             continue
+
+    #         display_row = []
+    #         for col_idx, val in enumerate(row):
+    #             if not self.columns[col_idx]:
+    #                 continue
+
+    #             display_row.append("1" if self.A[row_idx][col_idx] else "0")
+    #         display_list.append(" ".join(display_row))
+    #     return "\n".join(display_list)
+
 
 if __name__ == "__main__":
     A = [
@@ -118,5 +210,5 @@ if __name__ == "__main__":
 
     matrix = Matrix(A)
 
-    for solution in algorithm_x(matrix):
+    for solution in matrix.search():
         print(solution)

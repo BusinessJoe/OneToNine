@@ -1,5 +1,4 @@
 
-from dlxsudoku.algorithm_x import algorithm_x
 from dlxsudoku.rules.standard import StandardBox, Col, Row
 from dlxsudoku.sudoku import Sudoku
 
@@ -37,12 +36,12 @@ if __name__ == "__main__":
     print()
 
     matrix = sudoku.to_matrix()
-    # print(matrix)
-    solutions = algorithm_x(matrix)
+
+    print("starting search...\n")
+    
+    solutions = matrix.search()
 
     for solution in solutions:
-        for row_idx in solution:
-            row = matrix.A[row_idx]
         solved_sudoku = Sudoku.from_algorithm_x_solution(solution)
         print(solved_sudoku)
         print()
