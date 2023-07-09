@@ -1,4 +1,5 @@
 
+import time
 from dlxsudoku.rules.standard import StandardBox, Col, Row
 from dlxsudoku.sudoku import Sudoku
 
@@ -35,11 +36,21 @@ if __name__ == "__main__":
     print(sudoku)
     print()
 
-    matrix = sudoku.to_matrix()
+    print("generating dlx graph...")
+    start = time.perf_counter_ns()
 
-    print("starting search...\n")
-    
-    solutions = matrix.search()
+    graph = sudoku.to_graph()
+
+    end = time.perf_counter_ns()
+    print(f"done in {(end - start) // 1000000} ms\n")
+
+    print("starting search...")
+    start = time.perf_counter_ns()
+
+    solutions = graph.search()
+
+    end = time.perf_counter_ns()
+    print(f"done in {(end - start)} ns\n")
 
     for solution in solutions:
         solved_sudoku = Sudoku.from_algorithm_x_solution(solution)
