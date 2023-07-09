@@ -66,7 +66,7 @@ class ColumnHeaderNode(Node):
         self.left.right = self
 
 
-class Matrix:
+class DlxGraph:
     root: ColumnHeaderNode
     row_mapping: dict[tuple[int], int]
 
@@ -208,7 +208,7 @@ if __name__ == "__main__":
         [0, 1, 0, 0, 0, 0, 1]
     ]
 
-    matrix = Matrix(A)
+    graph = DlxGraph(A)
 
-    for solution in matrix.search():
+    for solution in graph.search():
         print(solution)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Self
-from dlxsudoku.algorithm_x import Matrix
+from dlxsudoku.dlx import DlxGraph
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -19,9 +19,9 @@ class Sudoku:
         self.grid = grid
         self.rules = rules
 
-    def to_matrix(self) -> Matrix:
+    def to_graph(self) -> DlxGraph:
         """
-        Rows of the matrix are in the order 
+        Rows of the graph are in the order 
         R1C1#1, R1C1#2, ..., R1C2#1, R1C2#2, ...
         """
 
@@ -32,7 +32,7 @@ class Sudoku:
             matrix.extend(constraints)
 
         matrix_transpose = [list(i) for i in zip(*matrix)]
-        return Matrix(matrix_transpose)
+        return DlxGraph(matrix_transpose)
 
     def _matrix_row_idx(self, row: int, col: int, val: int) -> int:
         return row * 81 + col * 9 + val
