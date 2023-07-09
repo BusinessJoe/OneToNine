@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from typing import Self
-from dlxsudoku.dlx import DlxGraph
+from dlx import DlxGraph
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from dlxsudoku.rules import Rule
+    from rules import Rule
 
 
 class Sudoku:

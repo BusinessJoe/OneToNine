@@ -72,22 +72,43 @@ class DlxGraph:
     root: ColumnHeaderNode
     row_mapping: dict[tuple[int], int]
 
-    def __init__(self, grid: list[list[bool]]) -> None:
-        self.root = self._make_graph(grid)
-        self.row_map = self._make_row_mapping(grid)
+    def __init__(
+        self,
+        primary_grid: list[list[bool]],
+        secondary_grid: list[list[bool]] | None = None,
+    ) -> None:
+        self.root = self._make_graph(primary_grid, secondary_grid)
+        self.row_map = self._make_row_mapping(primary_grid, secondary_grid)
 
     @staticmethod
-    def _make_graph(grid: list[list[bool]]) -> ColumnHeaderNode:
+    def _make_graph(
+        primary_grid: list[list[bool]], secondary_grid: list[list[bool]] | None
+    ) -> ColumnHeaderNode:
         root = ColumnHeaderNode("root")
 
         column_headers: list[ColumnHeaderNode] = []
 
-        num_cols = len(grid[0])
-        for i in range(num_cols):
+        num_primary_cols = len(primary_grid[0])
+
+        # Add primary column headers
+        for i in range(num_primary_cols):
             column_header = ColumnHeaderNode(label=str(i))
             root.left.hook_right(column_header)
             column_header.hook_right(root)
             column_headers.append(column_header)
+
+        if secondary_grid is not None:
+            # Add secondary column headers
+            num_secondary_cols = len(secondary_grid[0])
+            for i in range(num_primary_cols, num_primary_cols + len(secondary_grid[0])):
+                column_header = ColumnHeaderNode(label=str(i))
+                column_headers.append(column_header)
+
+        # Attach secondary grid to primary if it exists
+        if secondary_grid is not None:
+            grid = [p + s for p, s in zip(primary_grid, secondary_grid)]
+        else:
+            grid = primary_grid
 
         for row in grid:
             leftmost_node = None
@@ -115,7 +136,14 @@ class DlxGraph:
         return root
 
     @staticmethod
-    def _make_row_mapping(grid: list[list[bool]]) -> dict[tuple[int], int]:
+    def _make_row_mapping(
+        primary_grid: list[list[bool]], secondary_grid: list[list[bool]] | None
+    ) -> dict[tuple[int], int]:
+        if secondary_grid is not None:
+            grid = [p + s for p, s in zip(primary_grid, secondary_grid)]
+        else:
+            grid = primary_grid
+
         row_map = dict()
 
         for row_idx, row in enumerate(grid):
@@ -131,10 +159,10 @@ class DlxGraph:
 
         # Algorithm start
         if self.root.right is self.root:
-            yield self.get_row_numbers_from_data_objects(solution)
+            yield self._get_row_numbers_from_data_objects(solution)
             return
 
-        c = self.choose_column()
+        c = self._choose_column()
         c.cover()
 
         r = c.down
@@ -159,7 +187,7 @@ class DlxGraph:
 
         c.uncover()
 
-    def choose_column(self) -> ColumnHeaderNode:
+    def _choose_column(self) -> ColumnHeaderNode:
         min_column = self.root.right
         column = min_column.right
         while column is not self.root:
@@ -169,7 +197,7 @@ class DlxGraph:
 
         return min_column
 
-    def get_row_numbers_from_data_objects(self, data_objects: list[Node]) -> list[int]:
+    def _get_row_numbers_from_data_objects(self, data_objects: list[Node]) -> list[int]:
         rows = []
         for o in data_objects:
             solution = [int(o.header.label)]
@@ -183,16 +211,42 @@ class DlxGraph:
 
 
 if __name__ == "__main__":
+    # A = [
+    #     [1, 0, 0, 1, 0, 0, 1],
+    #     [1, 0, 0, 1, 0, 0, 0],
+    #     [0, 0, 0, 1, 1, 0, 1],
+    #     [0, 0, 1, 0, 1, 1, 0],
+    #     [0, 1, 1, 0, 0, 1, 1],
+    #     [0, 1, 0, 0, 0, 0, 1],
+    # ]
+    # B = None
     A = [
-        [1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0],
         [1, 0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 1, 1, 0, 1],
-        [0, 0, 1, 0, 1, 1, 0],
-        [0, 1, 1, 0, 0, 1, 1],
+        [1, 0, 0, 1, 0, 0, 0],
+        [1, 0, 0, 0, 0, 1, 0],
         [0, 1, 0, 0, 0, 0, 1],
+        [0, 1, 0, 0, 1, 0, 0],
+        [0, 1, 0, 0, 1, 0, 0],
+        [0, 1, 0, 0, 0, 0, 1],
+        [0, 0, 1, 1, 1, 0, 0],
+        [0, 0, 1, 0, 0, 1, 1],
+    ]
+    # These have to be optional because there are only 2 cells, so we can't fit all 4 digits
+    B = [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
     ]
 
-    graph = DlxGraph(A)
+    graph = DlxGraph(A, B)
 
     for solution in graph.search():
         print(solution)

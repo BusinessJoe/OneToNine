@@ -1,5 +1,5 @@
-from dlxsudoku.sudoku import Sudoku
-from dlxsudoku.rules import Rule
+from sudoku import Sudoku
+from rules import Rule
 
 
 class Row(Rule):

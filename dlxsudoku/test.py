@@ -1,6 +1,6 @@
 import time
-from dlxsudoku.rules.standard import StandardBox, Col, Row
-from dlxsudoku.sudoku import Sudoku
+from rules.standard import StandardBox, Col, Row
+from sudoku import Sudoku
 
 
 def add_rows(row1, row2):
@@ -30,6 +30,17 @@ if __name__ == "__main__":
     #     [None, None, 6, None, 2, None, None, 4, 7],
     #     [None, None, 3, None, None, 9, None, None, None],
     # ]
+    grid = [
+        [6, 3, None, None, None, None, None, 8, 1],
+        [None, 2, None, None, None, 3, None, None, None],
+        [None, None, None, None, 1, 7, 4, 3, None],
+        [None, 9, 6, 4, None, None, 5, 7, None],
+        [None, None, None, 7, 6, 2, None, None, None],
+        [None, 8, None, None, None, None, 6, None, None],
+        [None, 6, None, None, 2, None, None, None, None],
+        [3, None, 9, None, None, None, None, 6, None],
+        [None, None, None, None, None, None, None, None, 9],
+    ]
     sudoku = Sudoku([Row(), Col(), StandardBox()], grid)
 
     print(sudoku)

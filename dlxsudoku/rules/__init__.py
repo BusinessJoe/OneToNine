@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from dlxsudoku.sudoku import Sudoku
+from sudoku import Sudoku
 
 
 class Rule(ABC):
