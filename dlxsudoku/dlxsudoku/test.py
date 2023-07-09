@@ -1,4 +1,3 @@
-
 import time
 from dlxsudoku.rules.standard import StandardBox, Col, Row
 from dlxsudoku.sudoku import Sudoku
@@ -18,7 +17,7 @@ if __name__ == "__main__":
         [None, 3, 9, None, None, 1, None, 2, None],
         [8, None, 4, None, None, None, None, 6, None],
         [None, 7, None, None, None, None, None, None, None],
-        [6, None, None, None, None, None, None, 5, 9], 
+        [6, None, None, None, None, None, None, 5, 9],
     ]
     # grid = [
     #     [5, 8, None, None, 6, 7, 2, None, None],

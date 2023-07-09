@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 class Node:
     left: Node
     right: Node
@@ -21,6 +22,7 @@ class Node:
     def hook_down(self, node: Node):
         self.down = node
         node.up = self
+
 
 class ColumnHeaderNode(Node):
     left: ColumnHeaderNode
@@ -45,7 +47,7 @@ class ColumnHeaderNode(Node):
                 j.up.down = j.down
                 j.header.size -= 1
 
-                j = j.right   
+                j = j.right
 
             i = i.down
 
@@ -86,7 +88,6 @@ class DlxGraph:
             root.left.hook_right(column_header)
             column_header.hook_right(root)
             column_headers.append(column_header)
-            
 
         for row in grid:
             leftmost_node = None
@@ -112,7 +113,7 @@ class DlxGraph:
                     node.hook_right(leftmost_node)
 
         return root
-    
+
     @staticmethod
     def _make_row_mapping(grid: list[list[bool]]) -> dict[tuple[int], int]:
         row_map = dict()
@@ -123,16 +124,16 @@ class DlxGraph:
 
         return row_map
 
-    def search(self, solution = None):
+    def search(self, solution=None):
         # Handle mutable default arguments
         if solution is None:
             solution = []
 
         # Algorithm start
         if self.root.right is self.root:
-            yield self.print_solution(solution)
+            yield self.get_row_numbers_from_data_objects(solution)
             return
-        
+
         c = self.choose_column()
         c.cover()
 
@@ -142,9 +143,9 @@ class DlxGraph:
             j = r.right
             while j is not r:
                 j.header.cover()
-                
+
                 j = j.right
-            
+
             yield from self.search(solution)
             solution.pop()
 
@@ -158,7 +159,6 @@ class DlxGraph:
 
         c.uncover()
 
-
     def choose_column(self) -> ColumnHeaderNode:
         min_column = self.root.right
         column = min_column.right
@@ -167,10 +167,9 @@ class DlxGraph:
                 min_column = column
             column = column.right
 
-        # TODO: choose column with smallest size
         return min_column
-    
-    def print_solution(self, data_objects: list[Node]) -> list[int]:
+
+    def get_row_numbers_from_data_objects(self, data_objects: list[Node]) -> list[int]:
         rows = []
         for o in data_objects:
             solution = [int(o.header.label)]
@@ -181,21 +180,6 @@ class DlxGraph:
             key = tuple(sorted(solution))
             rows.append(self.row_map[key])
         return rows
-    # def __str__(self) -> str:
-    #     display_list = []
-
-    #     for row_idx, row in enumerate(self.A):
-    #         if not self.rows[row_idx]:
-    #             continue
-
-    #         display_row = []
-    #         for col_idx, val in enumerate(row):
-    #             if not self.columns[col_idx]:
-    #                 continue
-
-    #             display_row.append("1" if self.A[row_idx][col_idx] else "0")
-    #         display_list.append(" ".join(display_row))
-    #     return "\n".join(display_list)
 
 
 if __name__ == "__main__":
@@ -205,7 +189,7 @@ if __name__ == "__main__":
         [0, 0, 0, 1, 1, 0, 1],
         [0, 0, 1, 0, 1, 1, 0],
         [0, 1, 1, 0, 0, 1, 1],
-        [0, 1, 0, 0, 0, 0, 1]
+        [0, 1, 0, 0, 0, 0, 1],
     ]
 
     graph = DlxGraph(A)

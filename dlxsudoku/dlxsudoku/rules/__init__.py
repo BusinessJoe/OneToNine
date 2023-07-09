@@ -5,7 +5,7 @@ from dlxsudoku.sudoku import Sudoku
 
 class Rule(ABC):
     @staticmethod
-    def matrix_row_idx(sudoku: Sudoku, row: int, col: int, val: int): 
+    def matrix_row_idx(sudoku: Sudoku, row: int, col: int, val: int):
         return row * (sudoku.num_cols * sudoku.max_val) + col * (sudoku.max_val) + val
 
     @abstractmethod
