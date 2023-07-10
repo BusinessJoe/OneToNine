@@ -26,14 +26,22 @@ class Sudoku:
         R1C1#1, R1C1#2, ..., R1C2#1, R1C2#2, ...
         """
 
-        matrix = self._row_column_constraints()
+        primary_matrix = self._row_column_constraints()
+        secondary_matrix = []
 
         for r in self.rules:
-            constraints = r.dlx_constraints(self)
-            matrix.extend(constraints)
+            if (constraints := r.primary_dlx_constraints(self)) is not None:
+                primary_matrix.extend(constraints)
+            if (constraints := r.secondary_dlx_constraints(self)) is not None:
+                secondary_matrix.extend(constraints)
 
-        matrix_transpose = [list(i) for i in zip(*matrix)]
-        return DlxGraph(matrix_transpose)
+        primary_matrix_transpose = [list(i) for i in zip(*primary_matrix)]
+
+        if not secondary_matrix:
+            return DlxGraph(primary_matrix_transpose)
+        else:
+            secondary_matrix_transpose = [list(i) for i in zip(*secondary_matrix)]
+            return DlxGraph(primary_matrix_transpose, secondary_matrix_transpose)
 
     def _matrix_row_idx(self, row: int, col: int, val: int) -> int:
         return row * 81 + col * 9 + val

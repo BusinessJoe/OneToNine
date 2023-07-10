@@ -9,5 +9,9 @@ class Rule(ABC):
         return row * (sudoku.num_cols * sudoku.max_val) + col * (sudoku.max_val) + val
 
     @abstractmethod
-    def dlx_constraints(self, sudoku: Sudoku) -> list[list[int]]:
+    def primary_dlx_constraints(self, sudoku: Sudoku) -> list[list[int]] | None:
+        pass
+
+    @abstractmethod
+    def secondary_dlx_constraints(self, sudoku: Sudoku) -> list[list[int]] | None:
         pass
