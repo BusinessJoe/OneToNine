@@ -9,7 +9,7 @@ const Sudoku = () => {
     const lines = [];
     for (let i = 1; i < 9; i++) {
         lines.push(
-            <Line vertical={true} index={i} width={width} />
+            <Line key={i} vertical={true} index={i} width={width} />
         )
         lines.push(
             <Line vertical={false} index={i} width={width} />
@@ -20,7 +20,7 @@ const Sudoku = () => {
     for (let row = 1; row <= 9; row++) {
         for (let col = 1; col <= 9; col++) {
             cells.push(
-                <Cell row={row} col={col} width={width / 9} />
+                <Cell key={`${row},${col}`} row={row} col={col} width={width / 9} />
             );
         }
     }

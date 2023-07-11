@@ -13,7 +13,7 @@ const Line = (props: LineProps) => {
 
     const common = {
         stroke: "black",
-        "stroke-width": strokeWidth,
+        strokeWidth: strokeWidth,
     };
 
     if (props.vertical) {
