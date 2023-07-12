@@ -16,7 +16,7 @@ type SudokuActions = {
 type SudokuSelector<T> = (state: SudokuState) => T
 
 // Log every time state is changed
-const log = (config) => (set, get, api) => config(args => {
+const log = (config: any) => (set: (arg0: any) => void, get: () => any, api: any) => config((args: any) => {
     console.log("  applying", args)
     set(args)
     console.log("  new state", get())
