@@ -1,7 +1,9 @@
+import React from 'react';
+
 interface LineProps {
     vertical: boolean,
     index: number,
-    width: number
+    width: number,
 }
 
 const Line = (props: LineProps) => {

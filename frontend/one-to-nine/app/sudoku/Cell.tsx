@@ -1,6 +1,7 @@
 "use client"
 
-import { useSudokuStore } from "../zustand/store";
+import React from "react";
+import { selectCellValue, useSudokuStore } from "../zustand/store";
 
 interface CellProps {
     width: number,
@@ -8,21 +9,38 @@ interface CellProps {
     col: number,
 }
 
-const Cell = (props: CellProps) => {
-    const x = (props.col - 1) * props.width;
-    const y = (props.row - 1) * props.width;
+const Cell = ({ width, row, col }: CellProps) => {
     const selectedCell = useSudokuStore((state) => state.selectedCell)
-    const selectCell = useSudokuStore((state) => state.setSelectedCell)
+    const cellValue = useSudokuStore(selectCellValue(row, col))
 
-    const isSelected = selectedCell && props.row === selectedCell[0] && props.col === selectedCell[1];
+    const selectCell = useSudokuStore((state) => state.setSelectedCell)
+    const setCellValue = useSudokuStore((state) => state.setCellValue)
+
+    const x = (col - 1) * width;
+    const y = (row - 1) * width;
+
+    const isSelected = selectedCell && row === selectedCell[0] && col === selectedCell[1];
     const fill = isSelected ? "red" : "white";
 
     const handleMouseDown = () => {
-        selectCell([props.row, props.col]);
+        selectCell([row, col]);
     }
 
     return (
-        <rect x={x} width={props.width} y={y} height={props.width} fill={fill} onMouseDown={handleMouseDown} />
+        <g>
+            <rect x={x} width={width} y={y} height={width} fill={fill} onMouseDown={handleMouseDown} />
+            <text
+                x={x + width / 2}
+                y={y + width / 1.7}
+                fontSize={100}
+                color="black"
+                dominantBaseline="middle"
+                textAnchor="middle"
+                pointerEvents="none"
+            >
+                {cellValue && cellValue[0]}
+            </text>
+        </g>
     );
 };
 
