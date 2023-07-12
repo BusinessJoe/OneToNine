@@ -2,6 +2,7 @@ import React from "react";
 import Box from "./Box";
 import Cell from "./Cell";
 import Line from "./Line";
+import Validator from "./Validator";
 
 const Sudoku = () => {
     const width = 1000;
@@ -27,11 +28,14 @@ const Sudoku = () => {
     }
 
     return (
-        <svg viewBox={`${-borderOffset} ${-borderOffset} ${width + 2 * borderOffset} ${width + 2 * borderOffset}`} >
-            {cells}
-            {lines}
-            <Box width={width} />
-        </svg>
+        <>
+            <Validator />
+            <svg viewBox={`${-borderOffset} ${-borderOffset} ${width + 2 * borderOffset} ${width + 2 * borderOffset}`} >
+                {cells}
+                {lines}
+                <Box width={width} />
+            </svg>
+        </>
     )
 };
 

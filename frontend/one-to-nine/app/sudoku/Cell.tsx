@@ -10,21 +10,23 @@ interface CellProps {
 }
 
 const Cell = ({ width, row, col }: CellProps) => {
-    const selectedCell = useSudokuStore((state) => state.selectedCell)
-    const cellValue = useSudokuStore(selectCellValue(row, col))
+    const selectedCell = useSudokuStore((state) => state.selectedCell);
+    const cellValue = useSudokuStore(selectCellValue(row, col));
+    const isError = useSudokuStore((state) => state.errorGrid[row]?.[col]);
 
-    const selectCell = useSudokuStore((state) => state.setSelectedCell)
-    const setCellValue = useSudokuStore((state) => state.setCellValue)
+    const selectCell = useSudokuStore((state) => state.setSelectedCell);
 
     const x = (col - 1) * width;
     const y = (row - 1) * width;
 
     const isSelected = selectedCell && row === selectedCell[0] && col === selectedCell[1];
-    const fill = isSelected ? "red" : "white";
+    const fill = isSelected ? "grey" : "white";
 
     const handleMouseDown = () => {
         selectCell([row, col]);
     }
+
+    const color = isError ? "red" : "black";
 
     return (
         <g>
@@ -33,7 +35,7 @@ const Cell = ({ width, row, col }: CellProps) => {
                 x={x + width / 2}
                 y={y + width / 1.7}
                 fontSize={100}
-                color="black"
+                fill={color}
                 dominantBaseline="middle"
                 textAnchor="middle"
                 pointerEvents="none"

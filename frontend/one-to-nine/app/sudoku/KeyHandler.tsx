@@ -27,7 +27,6 @@ const KeyHandler = ({ children }: { children: React.JSX.Element }) => {
         } else if (e.key === "Backspace") {
             handleDelete(e);
         }
-        console.log(e)
     };
 
     useEffect(() => {
@@ -38,9 +37,9 @@ const KeyHandler = ({ children }: { children: React.JSX.Element }) => {
     }, [handleKeyDown])
 
     return (
-        <div onKeyDown={(e) => console.log(e)}>
+        <>
             {children}
-        </div>
+        </>
     );
 };
 
