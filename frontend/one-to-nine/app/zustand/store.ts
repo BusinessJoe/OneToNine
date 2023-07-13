@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { immer } from 'zustand/middleware/immer';
 
 type SudokuState = {
-    fixedGrid: (number | undefined)[][],
-    userGrid: (number | undefined)[][],
+    fixedGrid: (number | null)[][],
+    userGrid: (number | null)[][],
     errorGrid: boolean[][],
     variantData: {},
     selectedCell: [number, number] | undefined,
@@ -11,7 +11,8 @@ type SudokuState = {
 
 type SudokuActions = {
     setSelectedCell: (selectedCell: [number, number] | undefined) => void,
-    setCellValue: (row: number, col: number, value: number | undefined) => void,
+    setCellValue: (row: number, col: number, value: number | null) => void,
+    setFixedGrid: (grid: (number | null)[][]) => void,
     setError: (row: number, col: number, value: boolean) => void,
     clearErrors: () => void,
 }
@@ -26,8 +27,8 @@ const log = (config: any) => (set: (arg0: any) => void, get: () => any, api: any
 }, get, api)
 
 export const useSudokuStore = create<SudokuState & SudokuActions>(log(immer<SudokuState & SudokuActions>((set) => ({
-    fixedGrid: Array.from({ length: 11 }, () => Array.from({ length: 11 }, () => undefined)),
-    userGrid: Array.from({ length: 11 }, () => Array.from({ length: 11 }, () => undefined)),
+    fixedGrid: Array.from({ length: 11 }, () => Array.from({ length: 11 }, () => null)),
+    userGrid: Array.from({ length: 11 }, () => Array.from({ length: 11 }, () => null)),
     errorGrid: Array.from({ length: 11 }, () => Array.from({ length: 11 }, () => false)),
     variantData: {},
     selectedCell: [3, 2],
@@ -35,9 +36,10 @@ export const useSudokuStore = create<SudokuState & SudokuActions>(log(immer<Sudo
     setSelectedCell: (selectedCell: [number, number] | undefined) => set((state) => {
         state.selectedCell = selectedCell;
     }),
-    setCellValue: (row: number, col: number, value: number | undefined) => set((state) => {
+    setCellValue: (row: number, col: number, value: number | null) => set((state) => {
         state.userGrid[row][col] = value;
     }),
+    setFixedGrid: (grid: (number | null)[][]) => set(() => ({ fixedGrid: grid })),
     setError: (row: number, col: number, value: boolean) => set((state) => {
         state.errorGrid[row][col] = value;
     }),
@@ -55,11 +57,11 @@ enum CellValueState {
 export const selectCellValue = (row: number, col: number): SudokuSelector<[number, CellValueState] | undefined> => {
     return (state) => {
         const fixed = state.fixedGrid[row]?.[col];
-        if (fixed !== undefined) {
+        if (fixed !== null) {
             return [fixed, CellValueState.Fixed];
         }
         const user = state.userGrid[row]?.[col];
-        if (user !== undefined) {
+        if (user !== null) {
             return [user, CellValueState.User]
         }
 

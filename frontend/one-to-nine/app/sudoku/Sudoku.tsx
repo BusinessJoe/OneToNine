@@ -3,6 +3,7 @@ import Box from "./Box";
 import Cell from "./Cell";
 import Line from "./Line";
 import Validator from "./Validator";
+import SudokuLoader from "./SudokuLoader";
 
 const Sudoku = () => {
     const width = 1000;
@@ -29,6 +30,7 @@ const Sudoku = () => {
 
     return (
         <>
+            <SudokuLoader />
             <Validator />
             <svg viewBox={`${-borderOffset} ${-borderOffset} ${width + 2 * borderOffset} ${width + 2 * borderOffset}`} >
                 {cells}
