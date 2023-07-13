@@ -32,7 +32,7 @@ def get_sudoku():
     return {
         "grid": grid,
         "variants": {},
-        "ws_url": "",
+        "ws_path": "/ws",
     }
 
 
