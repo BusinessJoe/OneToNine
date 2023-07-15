@@ -6,7 +6,11 @@ import { useSocketStore } from './zustand/socketStore';
 
 const TextEntry = () => {
     const ws_url = useSocketStore((state) => state.ws_url) || null;
-    const { sendMessage, lastMessage, readyState } = useWebSocket(ws_url);
+    const { sendMessage, lastMessage, readyState } = useWebSocket(ws_url, {
+        shouldReconnect: () => true,
+        reconnectAttempts: 20,
+        reconnectInterval: 500,
+    });
 
 
     console.log(ws_url);
