@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react";
-import { useSudokuStore } from "../zustand/store";
+import { useSudokuStore } from "../zustand/sudokuStore";
 
 const Validator = () => {
     const fixedGrid = useSudokuStore((state) => state.fixedGrid);

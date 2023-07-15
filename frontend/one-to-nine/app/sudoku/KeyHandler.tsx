@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useEffect } from "react";
-import { useSudokuStore } from "../zustand/store";
+import { useSudokuStore } from "../zustand/sudokuStore";
 
 const KeyHandler = ({ children }: { children: React.JSX.Element }) => {
     const setCellValue = useSudokuStore((state) => state.setCellValue);

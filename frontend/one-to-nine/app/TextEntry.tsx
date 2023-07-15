@@ -2,9 +2,14 @@
 
 import React, { FormEvent, useEffect, useState } from 'react'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { useSocketStore } from './zustand/socketStore';
 
 const TextEntry = () => {
-    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://localhost:8000/ws');
+    const ws_url = useSocketStore((state) => state.ws_url) || null;
+    const { sendMessage, lastMessage, readyState } = useWebSocket(ws_url);
+
+
+    console.log(ws_url);
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',

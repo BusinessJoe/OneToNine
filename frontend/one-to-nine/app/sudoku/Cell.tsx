@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import { selectCellValue, useSudokuStore } from "../zustand/store";
+import { selectCellValue, useSudokuStore } from "../zustand/sudokuStore";
 
 interface CellProps {
     width: number,
